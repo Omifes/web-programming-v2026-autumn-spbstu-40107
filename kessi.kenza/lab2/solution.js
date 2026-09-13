@@ -3,9 +3,7 @@ export function countVowels(str) {
   if (typeof str !== 'string') {
     return 0;
   }
-
   const vowels = ['a', 'e', 'i', 'o', 'u'];
-
   return str
     .toLowerCase()
     .split('')
