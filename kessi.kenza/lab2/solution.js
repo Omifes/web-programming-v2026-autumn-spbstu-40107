@@ -1,5 +1,6 @@
 export function countVowels(str) {
-  const vowels = ['a', 'e', 'i', 'o', 'u'];
+
+const vowels = ['a', 'e', 'i', 'o', 'u'];
   
 if (typeof str !== 'string') {
     return 0;
