@@ -22,8 +22,8 @@ body {
   width: 100%;
 }
 
-.menu-item:not(:first-child) {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #000;
+.menu-item:not(:last-child) {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #000;
 }
