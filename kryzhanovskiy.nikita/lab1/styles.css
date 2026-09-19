@@ -1,0 +1,33 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  font-family: sans-serif;
+}
+
+.menu {
+  width: 400px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #000;
+}
+
+.menu-item:not(:first-child) {
+  margin-top: 16px;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
