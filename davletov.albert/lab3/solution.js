@@ -1,5 +1,5 @@
 export function removeDuplicates(arr) {
-  let myArr = [];
+  const myArr = [];
 
   for (const num of arr) {
     if (myArr.includes(num) === false) {
