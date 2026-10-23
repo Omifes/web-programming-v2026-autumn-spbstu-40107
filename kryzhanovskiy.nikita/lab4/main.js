@@ -1,10 +1,10 @@
 import {Recipe} from './model.js';
 
-const STORAGE_KEY = 'lab4_recipes_state';
+const STORAGE_KEY = 'recipes';
 
 let recipes = [];
 
-function delay(ms = 50) {
+function delay(ms = 60) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
@@ -12,31 +12,30 @@ function delay(ms = 50) {
 
 function loadRecipes() {
   const rawData = localStorage.getItem(STORAGE_KEY);
-  if (!rawData) {
-    return [
-      new Recipe(
-        'Блины',
-        ['Молоко', 'Мука', 'Яйца', 'Сахар'],
-        [
-          'Взбить яйца с сахаром',
-          'Добавить молоко и муку',
-          'Жарить на сковороде',
-        ],
-      ),
-    ];
-  }
-
-  try {
-    const parsed = JSON.parse(rawData);
-    if (!Array.isArray(parsed)) {
+  if (rawData !== null) {
+    try {
+      const parsed = JSON.parse(rawData);
+      if (Array.isArray(parsed)) {
+        return parsed.map(
+          (item) => new Recipe(item.title, item.ingredients, item.steps),
+        );
+      }
+    } catch {
       return [];
     }
-    return parsed.map(
-      (item) => new Recipe(item.title, item.ingredients, item.steps),
-    );
-  } catch {
-    return [];
   }
+
+  return [
+    new Recipe(
+      'Блины',
+      ['Молоко', 'Мука', 'Яйца', 'Сахар'],
+      [
+        'Взбить яйца с сахаром',
+        'Добавить молоко и муку',
+        'Жарить на сковороде',
+      ],
+    ),
+  ];
 }
 
 function saveRecipes() {
@@ -55,8 +54,9 @@ function renderRecipes() {
     card.className = 'recipe-card';
     card.setAttribute('data-testid', 'entity-item');
 
-    // Название
+    // Название сущности
     const titleEl = document.createElement('h3');
+    titleEl.setAttribute('data-testid', 'entity-title');
     titleEl.textContent = recipe.title;
 
     // Мета-информация
@@ -64,7 +64,7 @@ function renderRecipes() {
     metaEl.className = 'recipe-meta';
     metaEl.textContent = `Ингредиентов: ${recipe.ingredientCount} | Шагов: ${recipe.stepCount}`;
 
-    // Ингредиенты
+    // Список ингредиентов
     const ingTitle = document.createElement('h4');
     ingTitle.textContent = 'Ингредиенты:';
     const ingList = document.createElement('ul');
@@ -78,7 +78,8 @@ function renderRecipes() {
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.className = 'btn-item-action';
-      removeBtn.textContent = 'Удалить';
+      removeBtn.textContent = '×';
+      removeBtn.title = 'Убрать ингредиент';
       removeBtn.addEventListener('click', async () => {
         removeBtn.disabled = true;
         await recipe.asyncRemoveIngredient(ing);
@@ -90,27 +91,7 @@ function renderRecipes() {
       ingList.appendChild(li);
     });
 
-    const addIngContainer = document.createElement('div');
-    addIngContainer.className = 'inline-form';
-    const ingInput = document.createElement('input');
-    ingInput.type = 'text';
-    ingInput.placeholder = 'Новый ингредиент';
-
-    const addIngBtn = document.createElement('button');
-    addIngBtn.type = 'button';
-    addIngBtn.textContent = 'Добавить ингредиент';
-    addIngBtn.addEventListener('click', async () => {
-      const val = ingInput.value.trim();
-      if (val) {
-        addIngBtn.disabled = true;
-        await recipe.asyncAddIngredient(val);
-        saveRecipes();
-        renderRecipes();
-      }
-    });
-    addIngContainer.append(ingInput, addIngBtn);
-
-    // Шаги
+    // Список шагов
     const stepsTitle = document.createElement('h4');
     stepsTitle.textContent = 'Шаги приготовления:';
     const stepsList = document.createElement('ol');
@@ -124,7 +105,8 @@ function renderRecipes() {
       const removeStepBtn = document.createElement('button');
       removeStepBtn.type = 'button';
       removeStepBtn.className = 'btn-item-action';
-      removeStepBtn.textContent = 'Удалить';
+      removeStepBtn.textContent = '×';
+      removeStepBtn.title = 'Убрать шаг';
       removeStepBtn.addEventListener('click', async () => {
         removeStepBtn.disabled = true;
         await recipe.asyncRemoveStep(stepIndex);
@@ -136,27 +118,6 @@ function renderRecipes() {
       stepsList.appendChild(li);
     });
 
-    const addStepContainer = document.createElement('div');
-    addStepContainer.className = 'inline-form';
-    const stepInput = document.createElement('input');
-    stepInput.type = 'text';
-    stepInput.placeholder = 'Новый шаг';
-
-    const addStepBtn = document.createElement('button');
-    addStepBtn.type = 'button';
-    addStepBtn.textContent = 'Добавить шаг';
-    addStepBtn.addEventListener('click', async () => {
-      const val = stepInput.value.trim();
-      if (val) {
-        addStepBtn.disabled = true;
-        await recipe.asyncAddStep(val);
-        saveRecipes();
-        renderRecipes();
-      }
-    });
-    addStepContainer.append(stepInput, addStepBtn);
-
-    // Единственный элемент удаления рецепта в карточке для чекера
     const actions = document.createElement('div');
     actions.className = 'card-actions';
 
@@ -165,10 +126,10 @@ function renderRecipes() {
     deleteRecipeBtn.className = 'btn-danger';
     deleteRecipeBtn.setAttribute('data-testid', 'delete-button');
     deleteRecipeBtn.setAttribute('data-action', 'delete');
-    deleteRecipeBtn.textContent = 'Удалить рецепт';
+    deleteRecipeBtn.textContent = 'Удалить';
     deleteRecipeBtn.addEventListener('click', async () => {
       deleteRecipeBtn.disabled = true;
-      await delay(50);
+      await delay(60);
       recipes.splice(recipeIndex, 1);
       saveRecipes();
       renderRecipes();
@@ -180,10 +141,8 @@ function renderRecipes() {
       metaEl,
       ingTitle,
       ingList,
-      addIngContainer,
       stepsTitle,
       stepsList,
-      addStepContainer,
       actions,
     );
     container.appendChild(card);
@@ -208,22 +167,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const ingredientsInput = form.querySelector('[name="ingredients"]');
       const stepsInput = form.querySelector('[name="steps"]');
 
-      const title = titleInput.value.trim();
+      const title = titleInput ? titleInput.value.trim() : '';
       const rawIngredients = ingredientsInput ? ingredientsInput.value : '';
       const rawSteps = stepsInput ? stepsInput.value : '';
 
       const ingredients = rawIngredients
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
+        ? rawIngredients
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [];
 
       const steps = rawSteps
-        .split(';')
-        .map((s) => s.trim())
-        .filter(Boolean);
+        ? rawSteps
+            .split(';')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [];
 
       if (title) {
-        await delay(50);
+        await delay(60);
         const newRecipe = new Recipe(title, ingredients, steps);
         recipes.push(newRecipe);
         saveRecipes();
