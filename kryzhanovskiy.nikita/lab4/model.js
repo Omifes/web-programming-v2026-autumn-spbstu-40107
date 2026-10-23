@@ -1,8 +1,8 @@
 export class Recipe {
   constructor(title, ingredients = [], steps = []) {
     this.title = title;
-    this.ingredients = [...ingredients];
-    this.steps = [...steps];
+    this.ingredients = Array.isArray(ingredients) ? [...ingredients] : [];
+    this.steps = Array.isArray(steps) ? [...steps] : [];
   }
 
   get ingredientCount() {
@@ -40,7 +40,7 @@ export class Recipe {
       setTimeout(() => {
         this.addIngredient(ingredient);
         resolve(this);
-      }, 100);
+      }, 50);
     });
   }
 
@@ -49,7 +49,7 @@ export class Recipe {
       setTimeout(() => {
         this.removeIngredient(ingredient);
         resolve(this);
-      }, 100);
+      }, 50);
     });
   }
 
@@ -58,7 +58,7 @@ export class Recipe {
       setTimeout(() => {
         this.addStep(step);
         resolve(this);
-      }, 100);
+      }, 50);
     });
   }
 
@@ -67,15 +67,13 @@ export class Recipe {
       setTimeout(() => {
         this.removeStep(index);
         resolve(this);
-      }, 100);
+      }, 50);
     });
   }
 }
 
-// 4.2 Функции для работы с массивом рецептов
-
 // 1. Группировка рецептов по количеству ингредиентов
-export function groupByIngredientCount(recipes) {
+export function groupRecipesByIngredientCount(recipes) {
   return recipes.reduce((acc, recipe) => {
     const count = recipe.ingredientCount;
     if (!acc[count]) {
@@ -85,24 +83,26 @@ export function groupByIngredientCount(recipes) {
     return acc;
   }, {});
 }
+// Алиас для обратной совместимости
+export const groupByIngredientCount = groupRecipesByIngredientCount;
 
 // 2. Уникальный список всех ингредиентов
 export function getUniqueIngredients(recipes) {
-  const allIngredients = recipes.flatMap((recipe) => recipe.ingredients);
-  return Array.from(new Set(allIngredients));
+  const all = recipes.flatMap((recipe) => recipe.ingredients);
+  return Array.from(new Set(all));
 }
 
 // 3. Рецепты, содержащие заданный ингредиент
 export function findRecipesByIngredient(recipes, ingredient) {
   return recipes.filter((recipe) =>
     recipe.ingredients.some(
-      (item) => item.toLowerCase() === ingredient.toLowerCase(),
+      (item) => item.toLowerCase() === String(ingredient).toLowerCase(),
     ),
   );
 }
 
 // 4. Группировка рецептов по длине списка шагов
-export function groupByStepCount(recipes) {
+export function groupRecipesByStepCount(recipes) {
   return recipes.reduce((acc, recipe) => {
     const count = recipe.stepCount;
     if (!acc[count]) {
@@ -112,6 +112,8 @@ export function groupByStepCount(recipes) {
     return acc;
   }, {});
 }
+
+export const groupByStepCount = groupRecipesByStepCount;
 
 // 5. Список всех названий рецептов
 export function getAllRecipeTitles(recipes) {

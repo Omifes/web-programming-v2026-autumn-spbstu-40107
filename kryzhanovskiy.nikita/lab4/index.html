@@ -12,10 +12,10 @@
 
       <section class="form-section">
         <h2>Добавить новый рецепт</h2>
-        <form id="recipe-form">
+        <form id="recipe-form" data-testid="entity-form">
           <div class="form-group">
             <label for="recipe-title">Название рецепта</label>
-            <input type="text" id="recipe-title" required />
+            <input type="text" id="recipe-title" name="title" required />
           </div>
 
           <div class="form-group">
@@ -23,6 +23,7 @@
             <input
               type="text"
               id="recipe-ingredients"
+              name="ingredients"
               placeholder="Мука, Сахар, Молоко"
               required
             />
@@ -34,6 +35,7 @@
             >
             <textarea
               id="recipe-steps"
+              name="steps"
               rows="3"
               placeholder="Смешать ингредиенты; Выпекать 20 минут"
               required
@@ -46,7 +48,11 @@
 
       <section class="recipes-section">
         <h2>Список рецептов</h2>
-        <div id="recipes-list" class="recipes-grid"></div>
+        <div
+          id="recipes-list"
+          data-testid="entity-list"
+          class="recipes-grid"
+        ></div>
       </section>
     </main>
 

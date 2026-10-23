@@ -1,8 +1,14 @@
-import {Recipe} from './model.js';
+import {Recipe} from './solution.js'; // или './model.js', если файл называется model.js
 
-const STORAGE_KEY = 'recipe_book_data';
+const STORAGE_KEY = 'lab4_recipes_state';
 
 let recipes = [];
+
+function delay(ms = 50) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 function loadRecipes() {
   const rawData = localStorage.getItem(STORAGE_KEY);
@@ -38,7 +44,7 @@ function saveRecipes() {
 }
 
 function renderRecipes() {
-  const container = document.getElementById('recipes-list');
+  const container = document.querySelector('[data-testid="entity-list"]');
   if (!container) {
     return;
   }
@@ -47,16 +53,18 @@ function renderRecipes() {
   recipes.forEach((recipe, recipeIndex) => {
     const card = document.createElement('article');
     card.className = 'recipe-card';
+    card.setAttribute('data-testid', 'entity-item');
 
-    // Заголовок и метаданные
+    // Название
     const titleEl = document.createElement('h3');
     titleEl.textContent = recipe.title;
 
+    // Мета-информация
     const metaEl = document.createElement('div');
     metaEl.className = 'recipe-meta';
     metaEl.textContent = `Ингредиентов: ${recipe.ingredientCount} | Шагов: ${recipe.stepCount}`;
 
-    // Секция ингредиентов
+    // Ингредиенты
     const ingTitle = document.createElement('h4');
     ingTitle.textContent = 'Ингредиенты:';
     const ingList = document.createElement('ul');
@@ -64,7 +72,6 @@ function renderRecipes() {
     recipe.ingredients.forEach((ing) => {
       const li = document.createElement('li');
       li.className = 'item-row';
-
       const textSpan = document.createElement('span');
       textSpan.textContent = ing;
 
@@ -103,7 +110,7 @@ function renderRecipes() {
     });
     addIngContainer.append(ingInput, addIngBtn);
 
-    // Секция шагов приготовления
+    // Шаги
     const stepsTitle = document.createElement('h4');
     stepsTitle.textContent = 'Шаги приготовления:';
     const stepsList = document.createElement('ol');
@@ -111,7 +118,6 @@ function renderRecipes() {
     recipe.steps.forEach((step, stepIndex) => {
       const li = document.createElement('li');
       li.className = 'item-row';
-
       const textSpan = document.createElement('span');
       textSpan.textContent = step;
 
@@ -150,14 +156,17 @@ function renderRecipes() {
     });
     addStepContainer.append(stepInput, addStepBtn);
 
-    // Удаление рецепта целиком
     const actions = document.createElement('div');
     actions.className = 'card-actions';
+
     const deleteRecipeBtn = document.createElement('button');
     deleteRecipeBtn.type = 'button';
     deleteRecipeBtn.className = 'btn-danger';
+    deleteRecipeBtn.setAttribute('data-testid', 'delete-button');
     deleteRecipeBtn.textContent = 'Удалить рецепт';
-    deleteRecipeBtn.addEventListener('click', () => {
+    deleteRecipeBtn.addEventListener('click', async () => {
+      deleteRecipeBtn.disabled = true;
+      await delay(50);
       recipes.splice(recipeIndex, 1);
       saveRecipes();
       renderRecipes();
@@ -183,18 +192,23 @@ document.addEventListener('DOMContentLoaded', () => {
   recipes = loadRecipes();
   renderRecipes();
 
-  const form = document.getElementById('recipe-form');
+  const form = document.querySelector('[data-testid="entity-form"]');
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const titleInput = document.getElementById('recipe-title');
-      const ingredientsInput = document.getElementById('recipe-ingredients');
-      const stepsInput = document.getElementById('recipe-steps');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+      }
+
+      const titleInput = form.querySelector('[name="title"]');
+      const ingredientsInput = form.querySelector('[name="ingredients"]');
+      const stepsInput = form.querySelector('[name="steps"]');
 
       const title = titleInput.value.trim();
-      const rawIngredients = ingredientsInput.value;
-      const rawSteps = stepsInput.value;
+      const rawIngredients = ingredientsInput ? ingredientsInput.value : '';
+      const rawSteps = stepsInput ? stepsInput.value : '';
 
       const ingredients = rawIngredients
         .split(',')
@@ -207,12 +221,21 @@ document.addEventListener('DOMContentLoaded', () => {
         .filter(Boolean);
 
       if (title) {
+        await delay(50); // Асинхронное добавление сущности
         const newRecipe = new Recipe(title, ingredients, steps);
         recipes.push(newRecipe);
         saveRecipes();
         renderRecipes();
         form.reset();
       }
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+      }
     });
   }
+
+  window.addEventListener('beforeunload', () => {
+    saveRecipes();
+  });
 });
