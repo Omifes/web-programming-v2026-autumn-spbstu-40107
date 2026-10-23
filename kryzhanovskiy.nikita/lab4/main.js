@@ -97,16 +97,15 @@ function renderRecipes() {
       stepsList.appendChild(li);
     });
 
-    // Строго единственный контрол удаления на карточку
     const actions = document.createElement('div');
     actions.className = 'card-actions';
 
     const deleteBtn = document.createElement('button');
     deleteBtn.type = 'button';
-    deleteBtn.className = 'btn-danger';
+    deleteBtn.className = 'btn-danger delete-button';
     deleteBtn.setAttribute('data-testid', 'delete-button');
     deleteBtn.setAttribute('data-action', 'delete');
-    deleteBtn.setAttribute('aria-label', 'Удалить рецепт');
+    deleteBtn.setAttribute('aria-label', 'Удалить');
     deleteBtn.textContent = 'Удалить';
 
     deleteBtn.addEventListener('click', async () => {
@@ -117,8 +116,6 @@ function renderRecipes() {
       renderRecipes();
     });
 
-    actions.appendChild(deleteBtn);
-
     card.append(
       titleEl,
       metaEl,
@@ -126,7 +123,7 @@ function renderRecipes() {
       ingList,
       stepsTitle,
       stepsList,
-      actions,
+      deleteBtn,
     );
     container.appendChild(card);
   });
