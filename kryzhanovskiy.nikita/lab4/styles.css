@@ -71,6 +71,16 @@ button:hover {
   background-color: #bd2130;
 }
 
+.btn-item-action {
+  background-color: #6c757d;
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.btn-item-action:hover {
+  background-color: #5a6268;
+}
+
 .recipes-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -108,9 +118,4 @@ ol {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 6px;
-}
-
-.item-row button {
-  padding: 2px 8px;
-  font-size: 12px;
 }

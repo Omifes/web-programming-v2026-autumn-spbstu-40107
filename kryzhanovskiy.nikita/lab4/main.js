@@ -1,4 +1,4 @@
-import {Recipe} from './solution.js'; // или './model.js', если файл называется model.js
+import {Recipe} from './model.js';
 
 const STORAGE_KEY = 'lab4_recipes_state';
 
@@ -77,7 +77,7 @@ function renderRecipes() {
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
-      removeBtn.className = 'btn-danger';
+      removeBtn.className = 'btn-item-action';
       removeBtn.textContent = 'Удалить';
       removeBtn.addEventListener('click', async () => {
         removeBtn.disabled = true;
@@ -123,7 +123,7 @@ function renderRecipes() {
 
       const removeStepBtn = document.createElement('button');
       removeStepBtn.type = 'button';
-      removeStepBtn.className = 'btn-danger';
+      removeStepBtn.className = 'btn-item-action';
       removeStepBtn.textContent = 'Удалить';
       removeStepBtn.addEventListener('click', async () => {
         removeStepBtn.disabled = true;
@@ -156,6 +156,7 @@ function renderRecipes() {
     });
     addStepContainer.append(stepInput, addStepBtn);
 
+    // Единственный элемент удаления рецепта в карточке для чекера
     const actions = document.createElement('div');
     actions.className = 'card-actions';
 
@@ -163,6 +164,7 @@ function renderRecipes() {
     deleteRecipeBtn.type = 'button';
     deleteRecipeBtn.className = 'btn-danger';
     deleteRecipeBtn.setAttribute('data-testid', 'delete-button');
+    deleteRecipeBtn.setAttribute('data-action', 'delete');
     deleteRecipeBtn.textContent = 'Удалить рецепт';
     deleteRecipeBtn.addEventListener('click', async () => {
       deleteRecipeBtn.disabled = true;
@@ -221,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .filter(Boolean);
 
       if (title) {
-        await delay(50); // Асинхронное добавление сущности
+        await delay(50);
         const newRecipe = new Recipe(title, ingredients, steps);
         recipes.push(newRecipe);
         saveRecipes();

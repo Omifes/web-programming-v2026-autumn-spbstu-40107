@@ -83,7 +83,6 @@ export function groupRecipesByIngredientCount(recipes) {
     return acc;
   }, {});
 }
-// Алиас для обратной совместимости
 export const groupByIngredientCount = groupRecipesByIngredientCount;
 
 // 2. Уникальный список всех ингредиентов
@@ -112,10 +111,10 @@ export function groupRecipesByStepCount(recipes) {
     return acc;
   }, {});
 }
-
 export const groupByStepCount = groupRecipesByStepCount;
 
 // 5. Список всех названий рецептов
-export function getAllRecipeTitles(recipes) {
+export function getRecipeTitles(recipes) {
   return recipes.map((recipe) => recipe.title);
 }
+export const getAllRecipeTitles = getRecipeTitles;
