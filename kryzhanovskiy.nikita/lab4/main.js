@@ -102,11 +102,10 @@ function renderRecipes() {
 
     const deleteBtn = document.createElement('button');
     deleteBtn.type = 'button';
-    deleteBtn.className = 'btn-danger delete-button';
-    deleteBtn.setAttribute('data-testid', 'delete-button');
+    deleteBtn.className = 'btn-danger';
+    deleteBtn.setAttribute('data-testid', 'delete-entity');
     deleteBtn.setAttribute('data-action', 'delete');
-    deleteBtn.setAttribute('aria-label', 'Удалить');
-    deleteBtn.textContent = 'Удалить';
+    deleteBtn.textContent = 'Удалить рецепт';
 
     deleteBtn.addEventListener('click', async () => {
       deleteBtn.disabled = true;
